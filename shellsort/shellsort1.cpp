@@ -8,8 +8,6 @@ using namespace std;
 
 int main() {
   int tamanho_vetor;
-  clock_t start, end;
-  double resultado_tempo;
 
   while (cin >> tamanho_vetor) {
     int vetor[tamanho_vetor];
@@ -107,8 +105,6 @@ void shell_ciura(int *vetor, int n){
         break;
     }
   }
-
-  // [5 4 27 6 10 3 15 2]
 
   while(h > 0){
     for(int i = h; i < n; i++) {
