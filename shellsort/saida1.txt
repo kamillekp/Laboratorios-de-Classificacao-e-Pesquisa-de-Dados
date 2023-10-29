@@ -1,0 +1,20 @@
+
+Numero de elementos na entrada: 16
+(SHELL P2) Tempo de execucao: 0 milissegundos
+(SHELL KNUTH) Tempo de execucao: 0 milissegundos
+
+Numero de elementos na entrada: 32
+(SHELL P2) Tempo de execucao: 0 milissegundos
+(SHELL KNUTH) Tempo de execucao: 0 milissegundos
+
+Numero de elementos na entrada: 50
+(SHELL P2) Tempo de execucao: 0 milissegundos
+(SHELL KNUTH) Tempo de execucao: 0 milissegundos
+
+Numero de elementos na entrada: 73
+(SHELL P2) Tempo de execucao: 0 milissegundos
+(SHELL KNUTH) Tempo de execucao: 0 milissegundos
+
+Numero de elementos na entrada: 98
+(SHELL P2) Tempo de execucao: 0 milissegundos
+(SHELL KNUTH) Tempo de execucao: 0 milissegundos
