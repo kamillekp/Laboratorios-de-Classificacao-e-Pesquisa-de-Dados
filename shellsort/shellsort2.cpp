@@ -47,6 +47,20 @@ int main() {
 
     /*------------------------------------------------------------------------------------------------------*/
 
+    for (int i = 0; i < tamanho_vetor; i++) {
+      vetor_copia[i] = vetor[i];
+    }
+
+    start = clock();
+    shell_ciura(vetor_copia, tamanho_vetor);
+    end = clock();
+
+    resultado_tempo = (double) (end - start);
+
+    cout << "SEQ SHELL CIURA, " << resultado_tempo << " milissegundos" << "2.40GHz 11th Gen Intel Core i5" << endl;
+
+    /*------------------------------------------------------------------------------------------------------*/
+
     cout << "\n";
   }
 }
@@ -96,34 +110,29 @@ void shell_knuth(int *vetor, int tamanho) {
 }
 
 // SHELL CIURA
-void shell_ciura(int *vetor, int n){
-  int vet_seq[17] = {1,4,10,23,57,132,301,701,1577,3548,7983,17961,40412,90927,204585,460316,1035711};
-  int num_inicial = 16;
-  int aux, j, h;
+void shell_ciura(int *vetor, int tamanho){
+  int vet_seq[18] = {0,1,4,10,23,57,132,301,701,1577,3548,7983,17961,40412,90927,204585,460316,1035711};
+  int num_inicial = 17;
 
-  for(int i = 0; i < 17; i++){
-    if(vet_seq[i] > n){
-        h = vet_seq[i-1];
+  for(int i = 0; i < 18; i++){
+    if(vet_seq[i] > tamanho){
+        num_inicial = i-1;
         break;
     }
   }
 
-  while(h > 0){
-    for(int i = h; i < n; i++) {
-      aux = vetor[i];
-      j = i;
+  while(vet_seq[num_inicial] > 0) {   
+    for(int i = vet_seq[num_inicial]; i < tamanho; i++) {
+      int j = i;
 
-      /* efetua comparações entre elementos com distância h: */
-      while(vetor[j - h] > aux) {
-        vetor[j] = vetor[j - h];
-        j -= h;
-        if(j < h) break;
+      while (j >= vet_seq[num_inicial] && vetor[j] < vetor[j - vet_seq[num_inicial]]) {
+        int temp = vetor[j];
+        vetor[j] = vetor[j - vet_seq[num_inicial]];
+        vetor[j - vet_seq[num_inicial]] = temp;
+        j -= vet_seq[num_inicial];
       }
-
-      vetor[j] = aux;
     }
-
+    
     num_inicial--;
-    h = vet_seq[num_inicial];
   }
 }
