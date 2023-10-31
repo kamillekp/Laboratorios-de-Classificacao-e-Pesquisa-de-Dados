@@ -27,7 +27,8 @@ int main() {
     shell_p2(vetor_copia, tamanho_vetor);
     end = clock();
 
-    resultado_tempo = (double) (end - start);
+    resultado_tempo = (double) (end - start) / CLOCKS_PER_SEC;
+	resultado_tempo *= 1000;
 
     cout << "\nSEQ SHELL P2, " << resultado_tempo << " milissegundos, " << "2.40GHz 11th Gen Intel Core i5" << endl;
 
@@ -41,7 +42,8 @@ int main() {
     shell_knuth(vetor_copia, tamanho_vetor);
     end = clock();
 
-    resultado_tempo = (double) (end - start);
+    resultado_tempo = (double) (end - start) / CLOCKS_PER_SEC;
+	resultado_tempo *= 1000;
 
     cout << "SEQ SHELL KNUTH, " << resultado_tempo << " milissegundos" << "2.40GHz 11th Gen Intel Core i5" << endl;
 
@@ -55,7 +57,8 @@ int main() {
     shell_ciura(vetor_copia, tamanho_vetor);
     end = clock();
 
-    resultado_tempo = (double) (end - start);
+    resultado_tempo = (double) (end - start) / CLOCKS_PER_SEC;
+	resultado_tempo *= 1000;
 
     cout << "SEQ SHELL CIURA, " << resultado_tempo << " milissegundos" << "2.40GHz 11th Gen Intel Core i5" << endl;
 
