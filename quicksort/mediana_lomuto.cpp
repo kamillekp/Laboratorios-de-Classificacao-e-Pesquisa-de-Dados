@@ -4,27 +4,23 @@ using namespace std;
 
 int vetor[1000000];
 
-int random(int i, int f);
 int partition_lomuto(int C[], int left, int right, int *swaps);
-void quicksort_randomizado(int c[], int i, int f, int *recursoes, int *swaps);
+void quicksort(int c[], int i, int f, int *swaps, int *recursoes);
 
 int main(){
-    int tamanho_vetor, start, end, swaps = 0, recursoes = 0;
+    int tamanho_vetor, start, end, swaps = 0, recursoes = 1;
     double result;
 
     while (cin >> tamanho_vetor) {
-        cout << "\nNumero de elementos na entrada: " << tamanho_vetor << endl;
         for (int i = 0; i < tamanho_vetor; i++) {
             scanf("%d", &vetor[i]);
         }
 
         start = clock();
-        quicksort_randomizado(vetor, 0, (tamanho_vetor - 1), &recursoes, &swaps);
+        quicksort(vetor, 0, (tamanho_vetor - 1), &swaps, &recursoes);
         end = clock();
 
         result = (double) (end - start) / CLOCKS_PER_SEC;
-
-        cout << "Tempo de execucao: " << result * 1000 << " milissegundos" << endl;
 
         cout << "TAMANHO ENTRADA " << tamanho_vetor << endl; 
         cout << "SWAPS " << swaps << endl;
@@ -37,15 +33,7 @@ int main(){
     return 0;
 }
 
-int random(int i, int f){
-    random_device rd; 
-    mt19937 gen(rd()); 
-    uniform_int_distribution<int> dist(i, f); 
-
-    return dist(gen);   
-}
-
-int partition_lomuto(int C[], int left, int right, int *swaps) {
+int partition_lomuto(int C[], int left, int right, int *swaps){
     int chave = C[left];
     int storeindex = left + 1; 
 
@@ -63,17 +51,20 @@ int partition_lomuto(int C[], int left, int right, int *swaps) {
     return (storeindex-1);
 }
 
-void quicksort_randomizado(int c[], int i, int f, int *recursoes, int *swaps){
-    int p, r;
+void quicksort(int c[], int i, int f, int *swaps, int *recursoes){
+    int p;
 
-    if(f > i) {
-        r = random(i,f);
+    if(f > i){
+        int media = (i + f) / 2;
+
+        if(c[f] > c[i] && c[f] < c[media])
+            swap(c[f], c[i]);
+        else if(c[media] > c[i] && c[media] < c[f])
+            swap(c[media], c[i]);
 
         (*recursoes)++;
-
-        swap(c[i], c[r]);
-        p = partition_lomuto(c,i,f, swaps);
-        quicksort_randomizado(c, i, p-1, recursoes, swaps);
-        quicksort_randomizado(c, p+1, f, recursoes, swaps);
+        p = partition_lomuto(c, i, f, swaps);
+        quicksort(c, i, p-1, swaps, recursoes);
+        quicksort(c, p+1, f, swaps, recursoes);
     }
 }
