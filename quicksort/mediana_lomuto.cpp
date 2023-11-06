@@ -61,7 +61,8 @@ void quicksort(int c[], int i, int f, int *swaps, int *recursoes){
             swap(c[f], c[i]);
         else if(c[media] > c[i] && c[media] < c[f])
             swap(c[media], c[i]);
-
+        
+        (*swaps)++;
         (*recursoes)++;
         p = partition_lomuto(c, i, f, swaps);
         quicksort(c, i, p-1, swaps, recursoes);
