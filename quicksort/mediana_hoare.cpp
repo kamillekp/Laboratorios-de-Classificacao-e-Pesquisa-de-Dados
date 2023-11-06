@@ -63,7 +63,8 @@ void quicksort(int c[], int i, int f, int *recursoes, int *swaps){
             swap(c[f], c[i]);
         else if(c[media] > c[i] && c[media] < c[f])
             swap(c[media], c[i]);
-
+        
+        (*swaps)++;
         (*recursoes)++;
 
         p = partition_hoare(c, i, f, swaps);
