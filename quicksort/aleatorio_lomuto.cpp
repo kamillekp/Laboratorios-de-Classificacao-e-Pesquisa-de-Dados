@@ -69,6 +69,7 @@ void quicksort_randomizado(int c[], int i, int f, int *recursoes, int *swaps){
     if(f > i) {
         r = random(i,f);
 
+        (*swaps)++;
         (*recursoes)++;
 
         swap(c[i], c[r]);
