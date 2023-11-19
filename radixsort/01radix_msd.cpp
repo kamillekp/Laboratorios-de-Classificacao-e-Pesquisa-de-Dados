@@ -2,159 +2,96 @@
 
 using namespace std;
 
+void msd_sort(vector<int>& arr, int exp, vector<int>& sorted_arr);
+int get_max_exp(vector<int>& arr);
+void print(vector<int>& arr);
 
 int main() {
+    string texto, palavras[10];
+    int i = 0;
+
+    fstream arquivo("texto.txt");
+    getline(arquivo, texto);
+
+    for (char c : texto) {
+    if (c == ' ') {
+        palavras[i++] = "";
+    } else {
+        palavras[i] += c;
+    }
+    }
+
+    if (!palavras[i].empty()) i++;
+
+    for (int j = 0; j < i; j++) cout << palavras[j] << " ";
+    cout << endl;
 
     return 0;
 }
 
-// Linked list node structure
-struct node {
-	vector<int> arr;
-	struct node* nxt[10];
-};
 
-// Function to create a new node of
-// the Linked List
-struct node* new_node(void)
-{
-	struct node* tempNode = new node;
+// Function to sort the given array using MSD Radix Sort recursively
+void msd_sort(vector<int>& arr, int exp, vector<int>& sorted_arr) {
+    if (exp <= 0) {
+        return;
+    }
 
-	for (int i = 0; i < 10; i++) {
-		tempNode->nxt[i] = NULL;
-	}
+    int n = arr.size();
+    vector<int> output(n, 0);
+    vector<int> count(10, 0);
 
-	// Return the created node
-	return tempNode;
+    for (int i = 0; i < n; i++) {
+        count[(arr[i] / exp) % 10]++;
+    }
+
+    for (int i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+        count[(arr[i] / exp) % 10]--;
+    }
+
+    for (int i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+
+    // Recursive sorting for each bucket
+    for (int i = 0; i < 10; i++) {
+        if (count[i] > 1) {
+            msd_sort(arr, exp / 10, sorted_arr);
+        } else if (count[i] == 1) {
+            sorted_arr.push_back(output[i]);
+        }
+    }
 }
 
-// Function to sort the given array
-// using MSD Radix Sort recursively
-void msd_sort(struct node* root, int exp,
-			vector<int>& sorted_arr)
-{
-	if (exp <= 0) {
-		return;
-	}
+// Function to calculate the MSD of the maximum value in the array
+int get_max_exp(vector<int>& arr) {
+    int mx = arr[0];
 
-	int j;
+    for (int i = 1; i < arr.size(); i++) {
+        if (arr[i] > mx) {
+            mx = arr[i];
+        }
+    }
 
-	// Stores the numbers in different
-	// buckets according their MSD
-	for (int i = 0;
-		i < root->arr.size();
-		i++) {
+    int exp = 1;
 
-		// Get the MSD in j
-		j = (root->arr[i] / exp) % 10;
+    while (mx > 10) {
+        mx /= 10;
+        exp *= 10;
+    }
 
-		// If j-th index in the node
-		// array is empty create and
-		// link a new node in index
-		if (root->nxt[j] == NULL) {
-			root->nxt[j] = new_node();
-		}
-
-		// Store the number in j-th node
-		root->nxt[j]->arr.push_back(
-			root->arr[i]);
-	}
-
-	// Sort again every child node that
-	// has more than one number
-	for (int i = 0; i < 10; i++) {
-
-		// If root->next is NULL
-		if (root->nxt[i] != NULL) {
-
-			if (root->nxt[i]->arr.size()
-				> 1) {
-
-				// Sort recursively
-				msd_sort(root->nxt[i],
-						exp / 10,
-						sorted_arr);
-			}
-
-			// If any node have only
-			// one number then it means
-			// the number is sorted
-			else {
-				sorted_arr.push_back(
-					root->nxt[i]->arr[0]);
-			}
-		}
-	}
-}
-
-// Function to calculate the MSD of the
-// maximum value in the array
-int get_max_exp(vector<int> arr)
-{
-	// Stores the maximum element
-	int mx = arr[0];
-
-	// Traverse the given array
-	for (int i = 1; i < arr.size(); i++) {
-
-		// Update the value of maximum
-		if (arr[i] > mx) {
-			mx = arr[i];
-		}
-	}
-
-	int exp = 1;
-
-	while (mx > 10) {
-		mx /= 10;
-		exp *= 10;
-	}
-
-	// Return the resultant value
-	return exp;
+    return exp;
 }
 
 // Function to print an array
-void print(vector<int> arr)
-{
-	for (int i = 0; i < arr.size(); i++)
-		cout << arr[i] << " ";
+void print(vector<int>& arr) {
+    for (int i = 0; i < arr.size(); i++) {
+        cout << arr[i] << " ";
+    }
 
-	cout << endl;
-}
-
-// Driver Code
-int main()
-{
-	// create the root node
-	struct node* root = new_node();
-
-	// Stores the unsorted array
-	// in the root node
-	root->arr.insert(root->arr.end(),
-					{ 9330, 9950, 718,
-					8977, 6790, 95,
-					9807, 741, 8586,
-					5710 });
-
-	cout << "Unsorted array : ";
-
-	// Print the unsorted array
-	print(root->arr);
-
-	// Find the optimal longest exponent
-	int exp = get_max_exp(root->arr);
-
-	// Stores the sorted numbers
-	vector<int> sorted_arr;
-
-	// Function Call
-	msd_sort(root, exp, sorted_arr);
-
-	cout << "Sorted array : ";
-
-	// Print the sorted array
-	print(sorted_arr);
-
-	return 0;
+    cout << endl;
 }
