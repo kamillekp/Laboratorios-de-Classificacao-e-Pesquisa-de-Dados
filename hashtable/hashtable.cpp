@@ -2,29 +2,32 @@
 
 using namespace std;
 
-#define MAX 997
+#define MAX 997 // fixo para criar os testes M = 997, 1999, 3989 e 7993
 typedef struct{
     int id;
     string name;
     string position;
 } Players;
 
-Players buscaJogador (vector<vector<Players>> hashtable, int id, int *consultas);
+void insereJogador (vector<vector<Players>>& hashtable, Players player, int *ocupadas);
+Players buscaJogador (vector<vector<Players>>& hashtable, int id, int *consultas);
+void printa_hashtable(vector<vector<Players>>& hashtable,int numLinhas);
+void printaPlayer(Players player);
 
 int main(){
 
-
+    
     //--------------------------------------------------------------------------------------------------------------------------------------
     // Declarando os dados
     //--------------------------------------------------------------------------------------------------------------------------------------
 
     vector<vector<Players>> hashtable(MAX);
     vector<Players> nomes;
-    vector<int> consult;
     Players player;
+    vector<int> consult;
     FILE *arq, *saida;
 
-    int ind, ocupadas = 0, consultas;
+    int id, ocupadas = 0, consultas;
     char linha[100];
     double tempoE, tempoP, start, end;
 
@@ -32,8 +35,8 @@ int main(){
     //--------------------------------------------------------------------------------------------------------------------------------------
     // Lendo os dados
     //--------------------------------------------------------------------------------------------------------------------------------------
-
-    arq = fopen("players.csv", "r");
+    
+    arq = fopen("players.csv", "r"); 
     if(arq == NULL){
         cout << "Erro ao abrir o arquivo" << endl;
         return 0;
@@ -45,22 +48,15 @@ int main(){
     start = clock();
     while(fgets(linha, 100, arq) != NULL){
         char *token = strtok(linha, ",");
-        player.id = atoi(token);
-
-        ind = player.id % MAX;
-
-        // contabilizando o número de posições ocupadas
-        if(hashtable[ind].size() == 0){
-            ocupadas++;
-        }
-
+        player.id = atoi(token); 
+        
         token = strtok(NULL, ",");
         player.name = token;
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, "\"");
         player.position = token;
 
-        hashtable[ind].push_back(player);
+        insereJogador(hashtable, player, &ocupadas);
     }
     end = clock();
 
@@ -87,9 +83,9 @@ int main(){
     start = clock();
     while(fgets(linha, 100, arq) != NULL){
         consultas = 0;
-        ind = atoi(linha);
+        id = atoi(linha);
 
-        player = buscaJogador(hashtable, ind, &consultas);
+        player = buscaJogador(hashtable, id, &consultas);
 
         // adicionando os dados à lista de saída
         nomes.push_back(player);
@@ -121,16 +117,11 @@ int main(){
     fprintf(saida, "TAMANHO MAXIMO DE LISTA #MAX1\n");      // FALTA
     fprintf(saida, "TAMANHO MEDIO DE LISTA #MED1\n");       // FALTA
 
-    // printando as saídas 2
-    fprintf(saida, "\n\nPARTE2: ESTATISTICAS DA TABELA HASH\n");
+    //printando as saídas 2
+    fprintf(saida, "\n\nPARTE2:  ESTATISTICAS DAS CONSULTAS\n");
     fprintf(saida, "TEMPO DE CONSULTA %lf EM MILISEGUNDOS\n", tempoP);
     for (int i = 0; i < consult.size(); i++){
-        if(nomes[i].id == -1){
-            fprintf(saida, "%d NAO ENCONTRADO\n", nomes[i].id);
-        }
-        else{
-            fprintf(saida, "%d %s %d\n", nomes[i].id, nomes[i].name.c_str(), consult[i]);
-        }
+        fprintf(saida, "%d %s %d\n", nomes[i].id, nomes[i].name.c_str(), consult[i]);
     }
     fprintf(saida, "MAXIMO NUMERO DE TESTES POR NOME ENCONTRADO #MAX2\n");      // FALTA
     fprintf(saida, "MEDIA DE TESTES POR NOME ENCONTRADO #MED2\n");              // FALTA
@@ -140,8 +131,18 @@ int main(){
     return 0;
 }
 
-Players buscaJogador (vector<vector<Players>> hashtable, int id, int *consultas){
-    int ind = id % 50;
+void insereJogador (vector<vector<Players>>& hashtable, Players player, int *ocupadas){
+    int ind = player.id % MAX;
+
+    if(hashtable[ind].size() == 0){
+        (*ocupadas)++;
+    }
+
+    hashtable[ind].push_back(player); // esta acontecendo o push_back
+}
+
+Players buscaJogador (vector<vector<Players>>& hashtable, int id, int *consultas){
+    int ind = id % MAX;
 
     for(int i = 0; i < hashtable[ind].size(); i++){
         (*consultas)++;
@@ -151,5 +152,25 @@ Players buscaJogador (vector<vector<Players>> hashtable, int id, int *consultas)
         }
     }
 
-    return {ind, "", ""}; 
+    Players playerNotFound;
+
+    playerNotFound.id = id;
+    playerNotFound.name = "NAO ENCONTRADO";
+    playerNotFound.position = "";
+
+    return playerNotFound; 
+}
+
+void printa_hashtable(vector<vector<Players>>& hashtable, int numLinhas){
+    for(int i =0; i < numLinhas; i++){
+        cout << i << " ";
+        for(int j = 0; j < hashtable[i].size(); j++){
+            cout << hashtable[i][j].id << " ";
+        }
+        cout << endl;
+    }
+}
+
+void printaPlayer(Players player){
+    cout << player.id << " " << player.name << " " << player.position << endl;
 }
