@@ -26,7 +26,8 @@ int main(int argc, char *argv[]){
     vector<int> consult;
     FILE *arq, *saida;
 
-    int id, ocupadas = 0, consultas, start, end;
+    int id, ocupadas = 0, consultas, flagConsulta = 0, start, end, maiorConsulta;
+    float mediaConsultas, taxaOcup;
     char linha[100];
     double tempoE, tempoP;
 
@@ -65,8 +66,18 @@ int main(int argc, char *argv[]){
     tempoE = (double) (end - start) / CLOCKS_PER_SEC;
     tempoE *= 1000;
 
-    ocupadas = (float) ocupadas / MAX;    
+    // taxa de ocupação da hashtable
+    taxaOcup = (float) ocupadas / MAX;
 
+    int max=hashtable[0].size();
+    int sum=0,media=0;
+    for(int i=0;i<hashtable.size();i++){
+        if(hashtable[i].size()>max){
+            max=hashtable[i].size();
+        }
+        sum+=hashtable[i].size();
+    }
+    media=sum/hashtable.size();
 
     //--------------------------------------------------------------------------------------------------------------------------------------
     // Pesquisando os dados
@@ -86,6 +97,14 @@ int main(int argc, char *argv[]){
 
         player = buscaJogador(hashtable, id, &consultas, MAX);
 
+        if(flagConsulta == 0){
+            maiorConsulta = consultas;
+            flagConsulta = 1;
+        }
+        else if(consultas > maiorConsulta){
+            maiorConsulta = consultas;
+        }
+
         // adicionando os dados à lista de saída
         nomes.push_back(player);
         consult.push_back(consultas);
@@ -93,6 +112,12 @@ int main(int argc, char *argv[]){
     end = clock();
 
     fclose(arq);
+
+    // calculando a média de consultas
+    for(int i = 0; i < consult.size(); i++){
+        mediaConsultas += consult[i];
+    }
+    mediaConsultas = mediaConsultas / (float) consult.size();
 
     // calculando o tempo de execução da pesquisa
     tempoP = (double) (end - start) / CLOCKS_PER_SEC;
@@ -115,19 +140,19 @@ int main(int argc, char *argv[]){
 
     // printando as saídas 1
     fprintf(saida, "PARTE1: ESTATISTICAS DA TABELA HASH\n");
-    fprintf(saida, "TEMPO DE CONSTRUCAO DA TABELA %0.f MILISEGUNDOS\n", tempoE);
-    fprintf(saida, "TAXA DE OCUPACAO %.2f\n", ocupadas);
-    fprintf(saida, "TAMANHO MAXIMO DE LISTA #MAX1\n");      // FALTA
-    fprintf(saida, "TAMANHO MEDIO DE LISTA #MED1\n");       // FALTA
+    fprintf(saida, "TEMPO DE CONSTRUCAO DA TABELA %.0f MILISEGUNDOS\n", tempoE);
+    fprintf(saida, "TAXA DE OCUPACAO %.2f \n", taxaOcup*100);
+    fprintf(saida, "TAMANHO MAXIMO DE LISTA %d\n",max);      // FALTA
+    fprintf(saida, "TAMANHO MEDIO DE LISTA %d\n",media);       // FALTA
 
     //printando as saídas 2
     fprintf(saida, "\n\nPARTE2:  ESTATISTICAS DAS CONSULTAS\n");
-    fprintf(saida, "TEMPO DE CONSULTA %0.f EM MILISEGUNDOS\n", tempoP);
+    fprintf(saida, "TEMPO DE CONSULTA %.0f EM MILISEGUNDOS\n", tempoP);
     for (int i = 0; i < consult.size(); i++){
         fprintf(saida, "%d %s %d\n", nomes[i].id, nomes[i].name.c_str(), consult[i]);
     }
-    fprintf(saida, "MAXIMO NUMERO DE TESTES POR NOME ENCONTRADO #MAX2\n");      // FALTA
-    fprintf(saida, "MEDIA DE TESTES POR NOME ENCONTRADO #MED2\n");              // FALTA
+    fprintf(saida, "MAXIMO NUMERO DE TESTES POR NOME ENCONTRADO %d\n", maiorConsulta);
+    fprintf(saida, "MEDIA DE TESTES POR NOME ENCONTRADO %d\n", mediaConsultas);     
 
     fclose(saida);
 
