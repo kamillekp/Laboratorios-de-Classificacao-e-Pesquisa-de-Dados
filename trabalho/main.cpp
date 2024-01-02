@@ -5,19 +5,17 @@
 using namespace std;
 
 int main(int argc, char *argv[]){
-    Hashtable_Player hashtable(50);
+    string id, id_user, short_name, long_name, position, nacionality, club, league, rating;
     string line;
 
-
+    //---------------------------------------------------------------------------------------------------------
     // ENTRADA PADRÃO DO ARQUIVO PRINCIPAL COM OS DADOS DOS JOGADORES
-    //20801,Cristiano Ronaldo,Cristiano Ronaldo dos Santos Aveiro,"ST, LW",Portugal,Juventus,Italian Serie A
-
+    Hashtable_Player hashtable_player(30);
     getline(cin, line);
     while(getline(cin, line)){
         stringstream ss(line);
-        string idS, short_name, long_name, position, nacionality, club, league;
 
-        getline(ss, idS, ',');
+        getline(ss, id, ',');
         getline(ss, short_name, ',');
         getline(ss, long_name, ',');
 
@@ -33,23 +31,35 @@ int main(int argc, char *argv[]){
         getline(ss, club, ',');
         getline(ss, league, ',');
 
-        int id = stoi(idS);
-
-        Player player(id, short_name, long_name, position, nacionality, club, league);
-        hashtable.insert_player(player);
+        hashtable_player.insert_player(Player (id, short_name, long_name, position, nacionality, club, league));
     }
 
-    hashtable.print_hashtable();
+    //hashtable_player.print_hashtable();
 
     //---------------------------------------------------------------------------------------------------------
     //ENTRADA DO ARQUIVO COM AVAALIAÇÕES DOS USUÁRIOS
-    // Hashtable_User hashtable_user(50);
+    Hashtable_User hashtable_user(200);
 
-    // ifstream file(argv[1]);
-    // while(getline(file, line)){
-    //     //exemplo de linha para leitura
-        
-    // }
+    ifstream file;
+    file.open(argv[1]);
+
+    if(!file.is_open()){
+        cout << "Arquivo nao encontrado." << endl;
+        return 0;
+    }
+
+    getline(file, line);
+    while(getline(file, line)){
+        stringstream ss(line);
+
+        getline(ss, id_user, ',');
+        getline(ss, id, ',');
+        getline(ss, rating, ',');
+
+        hashtable_user.insert_user(User(id_user, id, rating));
+    }
+
+    //hashtable_user.print_hashtable();
 
     return 0;
 }

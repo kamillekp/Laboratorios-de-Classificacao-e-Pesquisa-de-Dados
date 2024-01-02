@@ -18,7 +18,7 @@ class Hashtable_User {
         }
 
         void insert_user (User user){
-            int ind = user.id % MAX;
+            int ind = stoi(user.id) % MAX;
 
             if(hashtable[ind].size() == 0){
                 ocupadas++;
@@ -27,8 +27,8 @@ class Hashtable_User {
             hashtable[ind].push_back(user);
         }
 
-        User find_user (int id){
-            int ind = id % MAX;
+        User find_user (string id){
+            int ind = stoi(id) % MAX;
 
             for(int i = 0; i < hashtable[ind].size(); i++){
                 consultas++;
@@ -43,7 +43,7 @@ class Hashtable_User {
             for(int i = 0; i < MAX; i++){
                 cout << i << " -> ";
                 for(int j = 0; j < hashtable[i].size(); j++){
-                    cout << "";
+                    cout << "[" << hashtable[i][j].id << ":" << hashtable[i][j].id_player << ":" << hashtable[i][j].rate << "] -> ";
                 }
                 cout << "\\" << endl;
             }

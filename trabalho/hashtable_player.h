@@ -18,7 +18,7 @@ class Hashtable_Player {
         }
 
         void insert_player (Player player){
-            int ind = player.id % MAX;
+            int ind = stoi(player.id) % MAX;
 
             if(hashtable[ind].size() == 0){
                 ocupadas++;
@@ -27,8 +27,8 @@ class Hashtable_Player {
             hashtable[ind].push_back(player);
         }
 
-        Player find_player (int id){
-            int ind = id % MAX;
+        Player find_player (string id){
+            int ind = stoi(id) % MAX;
 
             for(int i = 0; i < hashtable[ind].size(); i++){
                 consultas++;

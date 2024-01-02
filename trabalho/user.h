@@ -3,11 +3,11 @@ using namespace std;
 
 class User {
     public:
-        int id;
-        int id_player;
-        float rate;
+        string id;
+        string id_player;
+        string rate;
 
-        User(int id, int id_player, float rate){
+        User(string id, string id_player, string rate){
             this->id = id;
             this->id_player = id_player;
             this->rate = rate;
