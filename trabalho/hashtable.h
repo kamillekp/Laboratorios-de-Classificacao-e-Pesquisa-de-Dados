@@ -1,20 +1,26 @@
 #include <bits/stdc++.h>
 #include "players.h"
+#include "user.h"
 using namespace std;
 
 class Hashtable {
     private:
         vector<vector<Players>> hashtable;
+        vector<vector<User>> hashtable_user;
         int ocupadas;
         int consultas;
         int MAX;
         
     public:
-        Hashtable(int MAX){
+        Hashtable(int MAX, int selection){
             this->MAX = MAX;
             this->ocupadas = 0;
             this->consultas = 0;
-            this->hashtable.resize(MAX);
+
+            if(selection == 0)
+                this->hashtable.resize(MAX);
+            else if(selection == 1)
+                this->hashtable_user.resize(MAX);
         }
 
         void insereJogador (Players player){
@@ -43,14 +49,14 @@ class Hashtable {
             for(int i = 0; i < MAX; i++){
                 cout << i << " -> ";
                 for(int j = 0; j < hashtable[i].size(); j++){
-                    cout << "[" << hashtable[i][j].id << ":" << hashtable[i][j].name << ":" << hashtable[i][j].position << "] -> ";
+                    cout << "[" << hashtable[i][j].id << ":" << hashtable[i][j].short_name << ":" << hashtable[i][j].long_name << ":" << hashtable[i][j].position << ":" << hashtable[i][j].nacionality << ":" << hashtable[i][j].club << ":" << hashtable[i][j].league << "] -> ";
                 }
                 cout << "\\" << endl;
             }
         }
 
         void printaPlayer(Players player){
-            cout << player.id << ":" << player.name << ":" << player.position << endl;
+            cout << player.id << ":" << player.long_name << ":" << player.position << endl;
         }
 
         int getOcupadas(){
