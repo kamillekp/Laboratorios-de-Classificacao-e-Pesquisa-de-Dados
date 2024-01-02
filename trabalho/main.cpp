@@ -1,43 +1,55 @@
 #include <bits/stdc++.h>  
-#include "hashtable.h" 
+#include "hashtable_Player.h" 
+#include "hashtable_User.h" 
 
 using namespace std;
 
 int main(int argc, char *argv[]){
-    Hashtable hashtable(50, 1);
+    Hashtable_Player hashtable(50);
     string line;
+
+
+    // ENTRADA PADRÃO DO ARQUIVO PRINCIPAL COM OS DADOS DOS JOGADORES
+    //20801,Cristiano Ronaldo,Cristiano Ronaldo dos Santos Aveiro,"ST, LW",Portugal,Juventus,Italian Serie A
 
     getline(cin, line);
     while(getline(cin, line)){
-        // exemplo de linha com dados do jogador a serem pegos
-        // 200389,J. Oblak,Jan Oblak,GK,Slovenia,Atlético Madrid,Spain Primera Division
+        stringstream ss(line);
+        string idS, short_name, long_name, position, nacionality, club, league;
 
-        int token = line.find_first_of(',');
-        int id = stoi(line.substr(0, token));
+        getline(ss, idS, ',');
+        getline(ss, short_name, ',');
+        getline(ss, long_name, ',');
 
-        int token2 = line.find_first_of(',', token+1);
-        string short_name = line.substr(token+1, token2 - token-1);
+        if(line.find("\"") != string::npos){
+            getline(ss, position, '\"');
+            getline(ss, position, '\"');
+            getline(ss, nacionality, ',');
+        }
+        else
+            getline(ss, position, ',');
 
-        int token3 = line.find_first_of(',', token2+1);
-        string long_name = line.substr(token2+1, token3 - token2-1);
+        getline(ss, nacionality, ',');
+        getline(ss, club, ',');
+        getline(ss, league, ',');
 
-        int token4 = line.find_first_of(',', token3+1);
-        string position = line.substr(token3+1, token4 - token3-1);
+        int id = stoi(idS);
 
-        int token5 = line.find_first_of(',', token4+1);
-        string nacionality = line.substr(token4+1, token5 - token4-1);
-
-        int token6 = line.find_first_of(',', token5+1);
-        string club = line.substr(token5+1, token6 - token5-1);
-
-        int token7 = line.find_first_of(',', token6+1);
-        string league = line.substr(token6+1, token7 - token6-1);
-
-        Players player(id, short_name, long_name, position, nacionality, club, league);
-        hashtable.insereJogador(player);
+        Player player(id, short_name, long_name, position, nacionality, club, league);
+        hashtable.insert_player(player);
     }
 
-    hashtable.printa_hashtable();
+    hashtable.print_hashtable();
+
+    //---------------------------------------------------------------------------------------------------------
+    //ENTRADA DO ARQUIVO COM AVAALIAÇÕES DOS USUÁRIOS
+    // Hashtable_User hashtable_user(50);
+
+    // ifstream file(argv[1]);
+    // while(getline(file, line)){
+    //     //exemplo de linha para leitura
+        
+    // }
 
     return 0;
 }

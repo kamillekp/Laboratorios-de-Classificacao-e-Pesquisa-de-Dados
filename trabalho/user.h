@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class User{
+class User {
     public:
         int id;
         int id_player;

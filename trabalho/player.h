@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class Players{
+class Player{
     public:
         int id;
         string short_name;
@@ -11,7 +11,7 @@ class Players{
         string club;
         string league;
 
-        Players(int id, string short_name, string long_name, string position, string nacionality, string club, string league){
+        Player(int id, string short_name, string long_name, string position, string nacionality, string club, string league){
             this->id = id;
             this->short_name = short_name;
             this->long_name = long_name;
