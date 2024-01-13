@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "player.h"
+#include "player.hpp"
 using namespace std;
 
 class Hashtable_Player {
@@ -35,6 +35,16 @@ class Hashtable_Player {
 
                 if(hashtable[ind][i].id == id){
                     return hashtable[ind][i];
+                }
+            }
+        }
+
+        void print_player(int id_player){
+            int ind = id_player % MAX;
+
+            for(int i = 0; i < hashtable[ind].size(); i++){
+                if(hashtable[ind][i].id == to_string(id_player)){
+                    cout << hashtable[ind][i].id << ":" << hashtable[ind][i].short_name << ":" << hashtable[ind][i].long_name << ":" << hashtable[ind][i].position << ":" << hashtable[ind][i].nacionality << ":" << hashtable[ind][i].club << ":" << hashtable[ind][i].league << endl;
                 }
             }
         }

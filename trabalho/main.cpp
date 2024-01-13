@@ -1,18 +1,25 @@
 #include <bits/stdc++.h>  
-#include "hashtable_Player.h" 
-#include "hashtable_User.h" 
-#include "hashtable_Tag.h"
+#include "hashtable_Player.hpp" 
+#include "hashtable_User.hpp" 
+#include "Trie.hpp"
+
+#define HASH_PLAYER 30
+#define HASH_USER 200
+#define RATING_FILE "consultas.csv"
+#define TAG_FILE "tags.csv"
 
 using namespace std;
 
-int main(int argc, char *argv[]){
+int main(){
     string id, id_user, short_name, long_name, position, nacionality, club, league, rating, tag;
     string line;
     ifstream file;
+    Trie trie_players;
+    Trie trie_tags;
 
     //---------------------------------------------------------------------------------------------------------
     // ENTRADA PADRÃO DO ARQUIVO PRINCIPAL COM OS DADOS DOS JOGADORES
-    Hashtable_Player hashtable_player(30);
+    Hashtable_Player hashtable_player(HASH_PLAYER);
     getline(cin, line);
     while(getline(cin, line)){
         stringstream ss(line);
@@ -33,17 +40,23 @@ int main(int argc, char *argv[]){
         getline(ss, club, ',');
         getline(ss, league, ',');
 
+        // INSERE NA HASH OS DADOS DO PLAYER
         hashtable_player.insert_player(Player (id, short_name, long_name, position, nacionality, club, league));
+
+        // INSERE NA TRIE OS DADOS DO PLAYER
+        trie_players.insert(long_name, stoi(id));
     }
 
+
+    //trie_players.print(trie.get_root());
     //hashtable_player.print_hashtable();
 
 
     //---------------------------------------------------------------------------------------------------------
     //ENTRADA DO ARQUIVO COM AVALIAÇÕES DOS USUÁRIOS
-    Hashtable_User hashtable_user(200);
+    Hashtable_User hashtable_user(HASH_USER);
 
-    file.open(argv[1]);
+    file.open(RATING_FILE);
 
     if(!file.is_open()){
         cout << "Arquivo nao encontrado." << endl;
@@ -56,9 +69,9 @@ int main(int argc, char *argv[]){
 
         getline(ss, id_user, ',');
         getline(ss, id, ',');
-        getline(ss, tag, ',');
+        getline(ss, rating, ',');
 
-        hashtable_user.insert_user(User(id_user, id, tag));
+        hashtable_user.insert_user(User(id_user, id, rating));
     }
 
     file.close();
@@ -68,9 +81,7 @@ int main(int argc, char *argv[]){
 
     //---------------------------------------------------------------------------------------------------------
     // ENTRADA DO ARQUIVO COM AS CONSULTAS USANDO TAGS
-    Hashtable_Tag hashtable_tag(200);
-
-    file.open(argv[2]);
+    file.open(TAG_FILE);
 
     if(!file.is_open()){
         cout << "Arquivo nao encontrado." << endl;
@@ -85,12 +96,22 @@ int main(int argc, char *argv[]){
         getline(ss, id, ',');
         getline(ss, tag, ',');
 
-        hashtable_tag.insert_tag(Tag(id_user, id, tag));
+        trie_tags.insert(tag, stoi(id));
     }
 
     file.close();
 
-    hashtable_tag.print_hashtable();
+    //trie_tags.print(trie_tags.get_root());
 
+    op = menu();
+
+    switch (op){
+        case 1:
+            break;
+        case 2:
+            break;
+        default:
+            break;
+    }
     return 0;
 }
