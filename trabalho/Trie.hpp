@@ -1,6 +1,4 @@
-#include<iostream>
-#include<string>
-#include<vector>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -21,6 +19,8 @@ public:
     void print(TRIE_NODE* root);
     void remove(string word, int id_player);
     TRIE_NODE* get_root(){return root;}
+    TRIE_NODE* catch_prefix(TRIE_NODE* root, string prefix);
+    vector<int> get_ids(TRIE_NODE* root);
 };
 
 Trie::Trie(){
@@ -100,3 +100,49 @@ void Trie::print(TRIE_NODE* root){
         print(root->children[i]);
     }
 }
+
+TRIE_NODE* Trie::catch_prefix(TRIE_NODE* root, string prefix){
+    TRIE_NODE* current = root;
+    vector<int> ids;
+
+    if (current == NULL)
+        return NULL;
+
+    // N E Y M A R
+    for (int i = 0; i < prefix.length(); i++){
+        TRIE_NODE* child = NULL;
+
+        for (int j = 0; j < current->children.size(); j++){
+            if (current->children[j]->data == prefix[i]){
+                child = current->children[j];
+                break;
+            }
+        }
+        
+        if (child == NULL)
+            return NULL;
+
+        current = child;
+    }
+
+    return current;
+}
+
+vector<int> Trie::get_ids(TRIE_NODE* root){
+    vector<int> ids;
+
+    if(root == NULL)
+        return ids;
+    else{
+        if(root->is_end != 0)
+            ids.push_back(root->is_end);
+    }
+
+    for(int i = 0; i < root->children.size(); i++){
+        vector<int> aux = get_ids(root->children[i]);
+        ids.insert(ids.end(), aux.begin(), aux.end());
+    }
+
+    return ids;
+}
+

@@ -39,12 +39,20 @@ class Hashtable_Player {
             }
         }
 
-        void print_player(int id_player){
+        void print_player1(int id_player){
             int ind = id_player % MAX;
 
+            cout << "sofifa_id\t" << "short_name\t" << "long_name\t\t\t" << "player_positions\t" << "rating\t" << "count\t" <<  endl;
             for(int i = 0; i < hashtable[ind].size(); i++){
                 if(hashtable[ind][i].id == to_string(id_player)){
-                    cout << hashtable[ind][i].id << ":" << hashtable[ind][i].short_name << ":" << hashtable[ind][i].long_name << ":" << hashtable[ind][i].position << ":" << hashtable[ind][i].nacionality << ":" << hashtable[ind][i].club << ":" << hashtable[ind][i].league << endl;
+                    if(hashtable[ind][i].counts == 0){
+                        cout << hashtable[ind][i].id << "\t\t" << hashtable[ind][i].short_name << "\t" << hashtable[ind][i].long_name << "\t" << hashtable[ind][i].position << "\t\t\t" << "0.0" << "\t" << hashtable[ind][i].counts << endl;
+                    }
+                    else{
+                        float rating = hashtable[ind][i].rating / hashtable[ind][i].counts;
+                        cout << hashtable[ind][i].id << "\t\t" << hashtable[ind][i].short_name << "\t" << hashtable[ind][i].long_name << "\t" << hashtable[ind][i].position << "\t\t\t" << rating << "\t" << hashtable[ind][i].counts << endl;
+                    }
+                    
                 }
             }
         }
@@ -69,5 +77,15 @@ class Hashtable_Player {
 
         int getMAX(){
             return MAX;
+        }
+
+        void update_rating(string id, float rating){
+            int ind = stoi(id) % MAX;
+
+            for(int i = 0; i < hashtable[ind].size(); i++){
+                if(hashtable[ind][i].id == id){
+                    hashtable[ind][i].update_rating(rating);
+                }
+            }
         }
 };

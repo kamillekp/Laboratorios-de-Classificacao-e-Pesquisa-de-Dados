@@ -3,25 +3,41 @@
 #include "hashtable_User.hpp" 
 #include "Trie.hpp"
 
+using namespace std;
+
 #define HASH_PLAYER 30
 #define HASH_USER 200
+#define PLAYERS_FILE "playerscopy.csv"
 #define RATING_FILE "consultas.csv"
 #define TAG_FILE "tags.csv"
 
-using namespace std;
+void menu(int *op);
 
 int main(){
     string id, id_user, short_name, long_name, position, nacionality, club, league, rating, tag;
     string line;
     ifstream file;
-    Trie trie_players;
-    Trie trie_tags;
+    Trie trie_players, trie_tags;
 
-    //---------------------------------------------------------------------------------------------------------
-    // ENTRADA PADRÃO DO ARQUIVO PRINCIPAL COM OS DADOS DOS JOGADORES
+    string prefix, user_ID, tag_name, pos;
+    vector<int> ids;            
+    int top, op;        
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+//  ENTRADA PADRÃO DO ARQUIVO PRINCIPAL COM OS DADOS DOS JOGADORES
     Hashtable_Player hashtable_player(HASH_PLAYER);
-    getline(cin, line);
-    while(getline(cin, line)){
+
+    file.open(PLAYERS_FILE);
+
+    if(!file.is_open()){
+        cout << "Arquivo nao encontrado." << endl;
+        return 0;
+    }
+
+    //SEPARANDO DADOS DE CADA JOGADOR
+    getline(file, line);
+    while(getline(file, line)){
         stringstream ss(line);
 
         getline(ss, id, ',');
@@ -47,13 +63,15 @@ int main(){
         trie_players.insert(long_name, stoi(id));
     }
 
+    file.close();
 
-    //trie_players.print(trie.get_root());
+    //trie_players.print(trie_players.get_root());
     //hashtable_player.print_hashtable();
+    //hashtable_player.print_player1(214977);
 
 
-    //---------------------------------------------------------------------------------------------------------
-    //ENTRADA DO ARQUIVO COM AVALIAÇÕES DOS USUÁRIOS
+//-------------------------------------------------------------------------------------------------------------------------------------------
+//  ENTRADA DO ARQUIVO COM AVALIAÇÕES DOS USUÁRIOS
     Hashtable_User hashtable_user(HASH_USER);
 
     file.open(RATING_FILE);
@@ -63,6 +81,7 @@ int main(){
         return 0;
     }
 
+    // SEPARANDO DADOS DE CADA AVALIAÇÃO
     getline(file, line);
     while(getline(file, line)){
         stringstream ss(line);
@@ -71,16 +90,18 @@ int main(){
         getline(ss, id, ',');
         getline(ss, rating, ',');
 
+        hashtable_player.update_rating(id, stof(rating));
         hashtable_user.insert_user(User(id_user, id, rating));
     }
 
     file.close();
 
     //hashtable_user.print_hashtable();
+    //hashtable_player.print_player1(214977);
 
 
-    //---------------------------------------------------------------------------------------------------------
-    // ENTRADA DO ARQUIVO COM AS CONSULTAS USANDO TAGS
+//-------------------------------------------------------------------------------------------------------------------------------------------
+//  ENTRADA DO ARQUIVO COM AS CONSULTAS USANDO TAGS
     file.open(TAG_FILE);
 
     if(!file.is_open()){
@@ -88,6 +109,7 @@ int main(){
         return 0;
     }
 
+    // SEPARANDO DADOS DE CADA TAG
     getline(file, line);
     while(getline(file, line)){
         stringstream ss(line);
@@ -103,15 +125,48 @@ int main(){
 
     //trie_tags.print(trie_tags.get_root());
 
-    op = menu();
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+// MENU DE OPÇÕES
+    menu(&op);
 
     switch (op){
         case 1:
+            cout << "Digite o prefixo: ";
+            cin >> prefix;
+
+            ids = trie_players.get_ids(trie_players.catch_prefix(trie_players.get_root(), prefix));
+
+            if(ids.size() == 0){
+                cout << "Nenhum jogador encontrado." << endl;
+                break;
+            }
+
+            for(int i = 0; i < ids.size(); i++){
+                hashtable_player.print_player1(ids[i]);
+            }
+
             break;
         case 2:
+            break;
+        case 3:
+            break;
+        case 4: 
             break;
         default:
             break;
     }
+
     return 0;
+}
+
+void menu(int *op){
+    cout << "-----------------------------------\tMENU\t-----------------------------------" << endl;
+    cout << "1 - Pesquisar por prefixo." << endl;
+    cout << "2 - Pesquisar avaliacoes do usuario." << endl;
+    cout << "3 - Pesquisar melhores jogadores de uma posicao." << endl;
+    cout << "4 - Pesquisar por tags." << endl;
+
+    cout << "Digite a opcao desejada: ";
+    cin >> *op;
 }
