@@ -42,15 +42,14 @@ class Hashtable_Player {
         void print_player1(int id_player){
             int ind = id_player % MAX;
 
-            cout << "sofifa_id\t" << "short_name\t" << "long_name\t\t\t" << "player_positions\t" << "rating\t" << "count\t" <<  endl;
             for(int i = 0; i < hashtable[ind].size(); i++){
                 if(hashtable[ind][i].id == to_string(id_player)){
                     if(hashtable[ind][i].counts == 0){
-                        cout << hashtable[ind][i].id << "\t\t" << hashtable[ind][i].short_name << "\t" << hashtable[ind][i].long_name << "\t" << hashtable[ind][i].position << "\t\t\t" << "0.0" << "\t" << hashtable[ind][i].counts << endl;
+                        cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].position << ", 5) " << "0.0" << ", 6) " << hashtable[ind][i].counts << endl;
                     }
                     else{
                         float rating = hashtable[ind][i].rating / hashtable[ind][i].counts;
-                        cout << hashtable[ind][i].id << "\t\t" << hashtable[ind][i].short_name << "\t" << hashtable[ind][i].long_name << "\t" << hashtable[ind][i].position << "\t\t\t" << rating << "\t" << hashtable[ind][i].counts << endl;
+                        cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].position << ", 5) " << rating << ", 6) " << hashtable[ind][i].counts << endl;
                     }
                     
                 }

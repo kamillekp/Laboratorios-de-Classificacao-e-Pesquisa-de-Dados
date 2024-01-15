@@ -137,6 +137,7 @@ int main(){
 
             ids = trie_players.get_ids(trie_players.catch_prefix(trie_players.get_root(), prefix));
 
+            cout << "\n1) sofifa_id, " << "2) short_name, " << "3) long_name, " << "4) player_positions, " << "5) rating, " << "6) count" <<  endl;
             if(ids.size() == 0){
                 cout << "Nenhum jogador encontrado." << endl;
                 break;
