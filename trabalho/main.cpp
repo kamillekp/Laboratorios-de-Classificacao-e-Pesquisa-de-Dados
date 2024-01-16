@@ -2,6 +2,7 @@
 #include "hashtable_Player.hpp" 
 #include "hashtable_User.hpp" 
 #include "Trie.hpp"
+#include "Trie_user.hpp"
 
 using namespace std;
 
@@ -13,11 +14,54 @@ using namespace std;
 
 void menu(int *op);
 
+vector<string> tokenize(const string& input, const string& delimiters) {
+    vector<string> tokens;
+    stringstream ss(input);
+    string token;
+
+    while (getline(ss, token)) {
+        size_t pos = 0;
+        while ((pos = token.find_first_of(delimiters)) != string::npos) {
+            if (pos > 0) {
+                tokens.push_back(token.substr(0, pos));
+            }
+            token.erase(0, pos + 1);
+        }
+        if (!token.empty() && token != "" && token != "\n" && token != "") {
+            tokens.push_back(token);
+        }
+    }
+
+    return tokens;
+}
+
+vector<string> splitString(const string& input, char delimiter) {
+    vector<string> result;
+    string token;
+    
+    for (char ch : input) {
+        if (ch == delimiter) {
+            if (!token.empty()) {
+                result.push_back(token);
+            }
+            token.clear();
+        } else {
+            token += ch;
+        }
+    }
+    
+    if (!token.empty()) {
+        result.push_back(token);
+    }
+    
+    return result;
+}
 int main(){
     string id, id_user, short_name, long_name, position, nacionality, club, league, rating, tag;
     string line;
     ifstream file;
-    Trie trie_players, trie_tags;
+    Trie trie_players;
+    Trie_User trie_tags;
 
     string prefix, user_ID, tag_name, pos;
     vector<int> ids;            
@@ -128,23 +172,32 @@ int main(){
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 // MENU DE OPÇÕES
+    //ordenar os players aqui
+    vector<Player> printa;
+    vector<string> tags_entrada;
+    int num_linhas = tags_entrada.size();
+    vector<vector<int>> ids_tags(num_linhas);
+    vector<int> aux;
+    stringstream ss; // Add this line
+
     menu(&op);
+
+    string id_string;
 
     switch (op){
         case 1:
             cout << "Digite o prefixo: ";
             cin >> prefix;
-
+            
             ids = trie_players.get_ids(trie_players.catch_prefix(trie_players.get_root(), prefix));
 
-            cout << "\n1) sofifa_id, " << "2) short_name, " << "3) long_name, " << "4) player_positions, " << "5) rating, " << "6) count" <<  endl;
-            if(ids.size() == 0){
-                cout << "Nenhum jogador encontrado." << endl;
-                break;
-            }
-
             for(int i = 0; i < ids.size(); i++){
-                hashtable_player.print_player1(ids[i]);
+                id_string= to_string(ids[i]);
+                hashtable_player.binary_insertion(printa, hashtable_player.find_player(id_string), 0, printa.size());
+            }
+       
+            for(int i = 0; i < printa.size(); i++){
+                hashtable_player.print_player1(stoi(printa[i].id));
             }
 
             break;
@@ -152,8 +205,60 @@ int main(){
             break;
         case 3:
             break;
-        case 4: 
-            break;
+        case 4:{
+            string tag_name;
+            vector<string> tags_entrada;
+            vector<vector<int>> ids_tags;
+            vector<int> aux;
+
+            cout << "Digite a tag (exemplo: 'Brazil' 'Primera Division'): ";
+            cin.ignore();
+            getline(cin, tag_name);
+
+            // separa tags
+            tags_entrada = splitString(tag_name, '\'');
+            
+            //excluindo espaços em branco da tags_entrada
+            for(int i = 0; i < tags_entrada.size(); i++){
+                if(tags_entrada[i] == " "){
+                    tags_entrada.erase(tags_entrada.begin() + i);
+                }
+            }
+
+            // achar ids das tags
+            for(int i = 0; i < tags_entrada.size(); i++){
+                ids = trie_tags.get_ids(trie_tags.catch_tag(trie_tags.get_root(), tags_entrada[i]));
+                ids_tags.push_back(ids);
+            }
+        
+            // achar interseccao entre as linhas da matriz
+            aux = ids_tags[0];
+            for(int i = 1; i < ids_tags.size(); i++){
+                for(int j = 0; j < aux.size(); j++){
+                    for(int k = 0; k < ids_tags[i].size(); k++){
+                        if(aux[j] == ids_tags[i][k]){
+                            break;
+                        }
+                        else if(k == ids_tags[i].size() - 1){
+                            aux.erase(aux.begin() + j);
+                            j--;
+                        }
+                    }
+                }
+            }
+
+            // ordenar os ids
+            for(int i = 0; i < aux.size(); i++){
+                id_string= to_string(aux[i]);
+                hashtable_player.binary_insertion(printa, hashtable_player.find_player(id_string), 0, printa.size());
+            }
+
+            // printar os ids
+            for(int i = 0; i < printa.size(); i++){
+                hashtable_player.print_player1(stoi(printa[i].id));
+            }
+
+            break;}
         default:
             break;
     }
@@ -171,3 +276,5 @@ void menu(int *op){
     cout << "Digite a opcao desejada: ";
     cin >> *op;
 }
+
+

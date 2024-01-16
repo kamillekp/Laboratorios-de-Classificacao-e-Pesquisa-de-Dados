@@ -17,74 +17,91 @@ class Hashtable_Player {
             this->hashtable.resize(MAX);
         }
 
-        void insert_player (Player player){
-            int ind = stoi(player.id) % MAX;
-
-            if(hashtable[ind].size() == 0){
-                ocupadas++;
-            }
-
-            hashtable[ind].push_back(player);
-        }
-
-        Player find_player (string id){
-            int ind = stoi(id) % MAX;
-
-            for(int i = 0; i < hashtable[ind].size(); i++){
-                consultas++;
-
-                if(hashtable[ind][i].id == id){
-                    return hashtable[ind][i];
-                }
-            }
-        }
-
-        void print_player1(int id_player){
-            int ind = id_player % MAX;
-
-            for(int i = 0; i < hashtable[ind].size(); i++){
-                if(hashtable[ind][i].id == to_string(id_player)){
-                    if(hashtable[ind][i].counts == 0){
-                        cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].position << ", 5) " << "0.0" << ", 6) " << hashtable[ind][i].counts << endl;
-                    }
-                    else{
-                        float rating = hashtable[ind][i].rating / hashtable[ind][i].counts;
-                        cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].position << ", 5) " << rating << ", 6) " << hashtable[ind][i].counts << endl;
-                    }
-                    
-                }
-            }
-        }
-
-        void print_hashtable(){
-            for(int i = 0; i < MAX; i++){
-                cout << i << " -> ";
-                for(int j = 0; j < hashtable[i].size(); j++){
-                    cout << "[" << hashtable[i][j].id << ":" << hashtable[i][j].short_name << ":" << hashtable[i][j].long_name << ":" << hashtable[i][j].position << ":" << hashtable[i][j].nacionality << ":" << hashtable[i][j].club << ":" << hashtable[i][j].league << "] -> ";
-                }
-                cout << "\\" << endl;
-            }
-        }
-
-        int getOcupadas(){
-            return ocupadas;
-        }
-
-        int getConsultas(){
-            return consultas;
-        }
-
-        int getMAX(){
-            return MAX;
-        }
-
-        void update_rating(string id, float rating){
-            int ind = stoi(id) % MAX;
-
-            for(int i = 0; i < hashtable[ind].size(); i++){
-                if(hashtable[ind][i].id == id){
-                    hashtable[ind][i].update_rating(rating);
-                }
-            }
-        }
+        void insert_player (Player player);
+        Player find_player (string id);
+        void print_player1(int id_player);
+        void print_hashtable();
+        int getOcupadas(){return ocupadas;}
+        int getConsultas(){return consultas;}
+        int getMAX(){return MAX;}
+        void update_rating(string id, float rating);
+        void binary_insertion(vector<Player> &vet, Player player, int left, int right);
 };
+
+void Hashtable_Player::binary_insertion(vector<Player> &vet, Player player, int left, int right){
+    if(vet.size() == 0){
+        vet.push_back(player);
+        return;
+    }
+
+    int mid = (left + right) / 2;
+
+    if(left == right){
+        vet.insert(vet.begin() + mid, player);
+        return;
+    }
+
+    if(player.rate < vet[mid].rate)
+        binary_insertion(vet, player, mid+1, right);
+    else
+        binary_insertion(vet, player, left, mid);
+}
+
+void Hashtable_Player::update_rating(string id, float rating){
+    int ind = stoi(id) % MAX;
+
+    for(int i = 0; i < hashtable[ind].size(); i++){
+        if(hashtable[ind][i].id == id){
+            hashtable[ind][i].update_rating(rating);
+        }
+    }
+}
+
+void Hashtable_Player::print_hashtable(){
+    for(int i = 0; i < MAX; i++){
+        cout << i << " -> ";
+        for(int j = 0; j < hashtable[i].size(); j++){
+            cout << "[" << hashtable[i][j].id << ":" << hashtable[i][j].short_name << ":" << hashtable[i][j].long_name << ":" << hashtable[i][j].position << ":" << hashtable[i][j].nacionality << ":" << hashtable[i][j].club << ":" << hashtable[i][j].league << "] -> ";
+        }
+        cout << "\\" << endl;
+    }
+}
+
+void Hashtable_Player::print_player1(int id_player){
+    int ind = id_player % MAX;
+
+    for(int i = 0; i < hashtable[ind].size(); i++){
+        if(hashtable[ind][i].id == to_string(id_player)){
+            if(hashtable[ind][i].counts == 0){
+                cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].position << ", 5) " << "0.0" << ", 6) " << hashtable[ind][i].counts << endl;
+            }
+            else{
+                float rating = hashtable[ind][i].rating / hashtable[ind][i].counts;
+                cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].position << ", 5) " << rating << ", 6) " << hashtable[ind][i].counts << endl;
+            }
+            
+        }
+    }
+}
+
+Player Hashtable_Player::find_player (string id){
+    int ind = stoi(id) % MAX;
+
+    for(int i = 0; i < hashtable[ind].size(); i++){
+        consultas++;
+
+        if(hashtable[ind][i].id == id){
+            return hashtable[ind][i];
+        }
+    }
+}
+
+void Hashtable_Player::insert_player (Player player){
+    int ind = stoi(player.id) % MAX;
+
+    if(hashtable[ind].size() == 0){
+        ocupadas++;
+    }
+
+    hashtable[ind].push_back(player);
+}

@@ -11,6 +11,7 @@ class Player{
         string club;
         string league;
         float rating;
+        float rate;
         int counts;
 
         Player(string id, string short_name, string long_name, string position, string nacionality, string club, string league){
@@ -22,12 +23,14 @@ class Player{
             this->club = club;
             this->league = league;
             this->rating = 0;
+            this->rate = 0;
             this->counts = 0;
         }
 
         void update_rating(float rating){
             this->rating += rating;
             this->counts++;
+            this->rate = this->rating / this->counts;
         }
 };
 
