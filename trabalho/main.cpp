@@ -255,7 +255,7 @@ int main(){
 
             // printar os ids
             for(int i = 0; i < printa.size(); i++){
-                hashtable_player.print_player1(stoi(printa[i].id));
+                hashtable_player.print_player4(stoi(printa[i].id));
             }
 
             break;}

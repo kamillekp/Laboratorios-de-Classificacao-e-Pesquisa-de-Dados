@@ -20,6 +20,7 @@ class Hashtable_Player {
         void insert_player (Player player);
         Player find_player (string id);
         void print_player1(int id_player);
+        void print_player4(int id_player);
         void print_hashtable();
         int getOcupadas(){return ocupadas;}
         int getConsultas(){return consultas;}
@@ -78,6 +79,23 @@ void Hashtable_Player::print_player1(int id_player){
             else{
                 float rating = hashtable[ind][i].rating / hashtable[ind][i].counts;
                 cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].position << ", 5) " << rating << ", 6) " << hashtable[ind][i].counts << endl;
+            }
+            
+        }
+    }
+}
+
+void Hashtable_Player::print_player4(int id_player){
+    int ind = id_player % MAX;
+
+    for(int i = 0; i < hashtable[ind].size(); i++){
+        if(hashtable[ind][i].id == to_string(id_player)){
+            if(hashtable[ind][i].counts == 0){
+                cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].nacionality << ", 5) " << hashtable[ind][i].club << ", 6) " << hashtable[ind][i].league << ", 7) " << fixed << setprecision(6) << hashtable[ind][i].rate << ", 8) " << setprecision(0) << hashtable[ind][i].counts << endl;
+            }
+            else{
+                float rating = hashtable[ind][i].rating / hashtable[ind][i].counts;
+                cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].nacionality << ", 5) " << hashtable[ind][i].club << ", 6) " << hashtable[ind][i].league << ", 7) " << fixed << setprecision(6) << hashtable[ind][i].rate << ", 8) " << setprecision(0) << hashtable[ind][i].counts << endl;
             }
             
         }
