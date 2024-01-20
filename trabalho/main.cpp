@@ -8,12 +8,38 @@ using namespace std;
 
 #define HASH_PLAYER 30
 #define HASH_USER 200
-#define PLAYERS_FILE "playerscopy.csv"
-#define RATING_FILE "consultas.csv"
-#define TAG_FILE "tags.csv"
+#define PLAYERS_FILE ".\\arquivos-parte1\\players.csv"
+#define RATING_FILE ".\\arquivos-parte1\\minirating.csv"
+#define TAG_FILE ".\\arquivos-parte1\\tags.csv"
 
-void menu(int *op);
+typedef struct Player_User{
+    Player player;
+    float rate_user;
+}player_user;
 
+void pesquisa2(vector<Player_User> &vet){
+    for(int i = 0; i < vet.size(); i++){
+        cout << "1) " << vet[i].player.id << ", 2) " << vet[i].player.short_name << ", 3) " << vet[i].player.long_name << ", 4) " << vet[i].player.rate << ", 5) " << vet[i].player.counts << ", 6) " << vet[i].rate_user << endl;
+    }
+}
+void binary_insertion(vector<Player_User> &vet, Player_User user, int left, int right){
+    if(vet.size() == 0){
+        vet.push_back(user);
+        return;
+    }
+
+    int mid = (left + right) / 2;
+
+    if(left == right){
+        vet.insert(vet.begin() + mid, user);
+        return;
+    }
+
+    if(user.player.rate < vet[mid].player.rate)
+        binary_insertion(vet, user, mid+1, right);
+    else
+        binary_insertion(vet, user, left, mid);
+}
 vector<string> tokenize(const string& input, const string& delimiters) {
     vector<string> tokens;
     stringstream ss(input);
@@ -34,7 +60,6 @@ vector<string> tokenize(const string& input, const string& delimiters) {
 
     return tokens;
 }
-
 vector<string> splitString(const string& input, char delimiter) {
     vector<string> result;
     string token;
@@ -56,6 +81,7 @@ vector<string> splitString(const string& input, char delimiter) {
     
     return result;
 }
+
 int main(){
     string id, id_user, short_name, long_name, position, nacionality, club, league, rating, tag;
     string line;
@@ -174,21 +200,48 @@ int main(){
 // MENU DE OPÇÕES
     //ordenar os players aqui
     vector<Player> printa;
+    vector<Player_User> printa2;
+    vector<Player_User> aux_pu;
+    vector<Player_User> principal;
+    vector<User> user_ratings;
     vector<string> tags_entrada;
     int num_linhas = tags_entrada.size();
     vector<vector<int>> ids_tags(num_linhas);
     vector<int> aux;
-    stringstream ss; // Add this line
+    stringstream ss;
+    int j = 0;
+    int k = 0;
+    string entrada;
+    string e1;
 
-    menu(&op);
+    // MENU DE OPÇÕES
+    cout << "Digite a opcao desejada: " << endl;
+    getline(cin, entrada);
 
+    stringstream ss2(entrada);
+    getline(ss2, e1, ' ');
+
+    if(e1 == "player"){
+        getline(ss2, prefix, ' ');
+        op = 1;
+    }
+    else if(e1 == "user"){
+        getline(ss2, id_user, ' ');
+        op = 2;
+    }
+    else if(e1 == "top"){
+
+        op = 3;
+    }
+    else if(e1 == "tags"){
+        getline(ss2, tag_name, '\0');
+        op = 4;
+    }   
+    
     string id_string;
 
     switch (op){
         case 1:
-            cout << "Digite o prefixo: ";
-            cin >> prefix;
-            
             ids = trie_players.get_ids(trie_players.catch_prefix(trie_players.get_root(), prefix));
 
             for(int i = 0; i < ids.size(); i++){
@@ -200,20 +253,56 @@ int main(){
                 hashtable_player.print_player1(stoi(printa[i].id));
             }
 
+            printa.clear();
+
             break;
+
+
+    //-------------------------------------------------------------------------------------------------------------------------------------------
         case 2:
+            // insere em user_ratings ordenando pelo rate
+            user_ratings = hashtable_user.find_user_ratings(id_user);
+
+            // pega players com os ids de user_ratings
+            for(int i = 0; i < user_ratings.size(); i++){
+                printa.push_back(hashtable_player.find_player(user_ratings[i].id_player));
+            }
+
+            // inserir na print2
+            for(int i = 0; i < printa.size(); i++){
+                printa2.push_back(Player_User{printa[i], stof(user_ratings[i].rate)});
+            }
+
+            //iniciaWhile:
+            do{
+                while(printa2[j].rate_user == printa2[k].rate_user){
+                    binary_insertion(aux_pu, printa2[k], 0, aux_pu.size());
+                    k++;
+                }
+
+                principal.insert(principal.end(), aux_pu.begin(), aux_pu.end());
+
+                aux_pu.clear();
+                j = k;
+            }while((printa2.size() - k) > 0);
+            //if((printa2.size() - k) > 0)
+                //goto iniciaWhile;
+
+            pesquisa2(principal);
+
             break;
+
+
+    //-------------------------------------------------------------------------------------------------------------------------------------------
         case 3:
             break;
+
+            
+    //-------------------------------------------------------------------------------------------------------------------------------------------
         case 4:{
-            string tag_name;
             vector<string> tags_entrada;
             vector<vector<int>> ids_tags;
             vector<int> aux;
-
-            cout << "Digite a tag (exemplo: 'Brazil' 'Primera Division'): ";
-            cin.ignore();
-            getline(cin, tag_name);
 
             // separa tags
             tags_entrada = splitString(tag_name, '\'');
@@ -264,17 +353,6 @@ int main(){
     }
 
     return 0;
-}
-
-void menu(int *op){
-    cout << "-----------------------------------\tMENU\t-----------------------------------" << endl;
-    cout << "1 - Pesquisar por prefixo." << endl;
-    cout << "2 - Pesquisar avaliacoes do usuario." << endl;
-    cout << "3 - Pesquisar melhores jogadores de uma posicao." << endl;
-    cout << "4 - Pesquisar por tags." << endl;
-
-    cout << "Digite a opcao desejada: ";
-    cin >> *op;
 }
 
 

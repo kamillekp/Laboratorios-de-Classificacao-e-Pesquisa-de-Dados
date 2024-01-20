@@ -78,7 +78,7 @@ void Hashtable_Player::print_player1(int id_player){
             }
             else{
                 float rating = hashtable[ind][i].rating / hashtable[ind][i].counts;
-                cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].position << ", 5) " << rating << ", 6) " << hashtable[ind][i].counts << endl;
+                cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].position << ", 5) " << fixed << setprecision(6) << rating << ", 6) " << setprecision(0) << hashtable[ind][i].counts << endl;
             }
             
         }

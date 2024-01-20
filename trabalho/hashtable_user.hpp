@@ -49,6 +49,44 @@ class Hashtable_User {
             }
         }
 
+        void binary_insertion(vector<User> &vet, User user, int left, int right){
+            if(vet.size() == 0){
+                vet.push_back(user);
+                return;
+            }
+
+            int mid = (left + right) / 2;
+
+            if(left == right){
+                vet.insert(vet.begin() + mid, user);
+                return;
+            }
+
+            if(user.rate < vet[mid].rate)
+                binary_insertion(vet, user, mid+1, right);
+            else
+                binary_insertion(vet, user, left, mid);
+        }
+
+        vector<User> find_user_ratings (string id){
+            int ind = stoi(id) % MAX;
+            vector<User> vet;
+
+            for(int i = 0; i < hashtable[ind].size(); i++){
+                if(hashtable[ind][i].id == id){
+                    binary_insertion(vet, hashtable[ind][i], 0, vet.size());
+                }
+            }
+
+            return vet;
+        }
+        
+        void printa_users(vector<User> &vet){
+            for(int i = 0; i < vet.size(); i++){
+                cout << vet[i].id_player << " " << vet[i].rate << endl;
+            }
+        }
+
         int getOcupadas(){
             return ocupadas;
         }
