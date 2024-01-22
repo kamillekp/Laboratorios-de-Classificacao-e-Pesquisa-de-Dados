@@ -14,9 +14,8 @@ private:
     int size;
 public:
     Trie();
-    ~Trie();
     void insert (string word, int id_player);
-    void print(TRIE_NODE* root);
+    void print(TRIE_NODE* root);            // APAGAR DEPOIS
     TRIE_NODE* get_root(){return root;}
     TRIE_NODE* catch_prefix(TRIE_NODE* root, string prefix);
     vector<int> get_ids(TRIE_NODE* root);
@@ -27,10 +26,6 @@ Trie::Trie(){
     root->data = ' ';
     root->is_end = 0;
     size = 0;
-}
-
-Trie::~Trie(){
-    delete root;
 }
 
 void Trie::insert(string word, int id_player){

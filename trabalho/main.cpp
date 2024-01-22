@@ -1,17 +1,29 @@
 #include <bits/stdc++.h>  
 #include "hashtable_Player.hpp" 
 #include "hashtable_User.hpp" 
-#include "Trie.hpp"
 #include "Trie_user.hpp"
+#include "Trie.hpp"
+#include "parsing.hpp"
 
 using namespace std;
+using namespace aria::csv;
 
-#define HASH_PLAYER 30
-#define HASH_USER 200
+// VARIÁVEIS GLOBAIS
+#define HASH_PLAYER 9473
+#define HASH_USER 9997000
 #define PLAYERS_FILE ".\\arquivos-parte1\\players.csv"
-#define RATING_FILE ".\\arquivos-parte1\\minirating.csv"
+#define RATING_FILE ".\\rating.csv"
 #define TAG_FILE ".\\arquivos-parte1\\tags.csv"
 
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+// INICIALIZANDO AS HASHTABLES
+Hashtable_Player hashtable_player(HASH_PLAYER);
+Hashtable_User hashtable_user(HASH_USER);
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+// STRUCT AUXILIAR E FUNÇÕES AUXILIARES PARA A PESQUISA 2
 typedef struct Player_User{
     Player player;
     float rate_user;
@@ -40,26 +52,10 @@ void binary_insertion(vector<Player_User> &vet, Player_User user, int left, int 
     else
         binary_insertion(vet, user, left, mid);
 }
-vector<string> tokenize(const string& input, const string& delimiters) {
-    vector<string> tokens;
-    stringstream ss(input);
-    string token;
 
-    while (getline(ss, token)) {
-        size_t pos = 0;
-        while ((pos = token.find_first_of(delimiters)) != string::npos) {
-            if (pos > 0) {
-                tokens.push_back(token.substr(0, pos));
-            }
-            token.erase(0, pos + 1);
-        }
-        if (!token.empty() && token != "" && token != "\n" && token != "") {
-            tokens.push_back(token);
-        }
-    }
 
-    return tokens;
-}
+//-------------------------------------------------------------------------------------------------------------------------------------------
+// FUNÇÃO AUXILIAR PARA A PESQUISA 4
 vector<string> splitString(const string& input, char delimiter) {
     vector<string> result;
     string token;
@@ -82,49 +78,44 @@ vector<string> splitString(const string& input, char delimiter) {
     return result;
 }
 
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
 int main(){
-    string id, id_user, short_name, long_name, position, nacionality, club, league, rating, tag;
+    clock_t start, end;
     string line;
     ifstream file;
     Trie trie_players;
     Trie_User trie_tags;
 
-    string prefix, user_ID, tag_name, pos;
-    vector<int> ids;            
-    int top, op;        
-
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
-//  ENTRADA PADRÃO DO ARQUIVO PRINCIPAL COM OS DADOS DOS JOGADORES
-    Hashtable_Player hashtable_player(HASH_PLAYER);
+    // ENTRADA PADRÃO DO ARQUIVO PRINCIPAL COM OS DADOS DOS JOGADORES
+    string id, id_user, short_name, long_name, position, nacionality, club, league;
+    int indice = 0;
 
-    file.open(PLAYERS_FILE);
+    ifstream file_players(PLAYERS_FILE);
+    
 
-    if(!file.is_open()){
-        cout << "Arquivo nao encontrado." << endl;
+    if(!file_players.is_open()){
+        cout << "Arquivo players nao encontrado." << endl;
         return 0;
     }
 
-    //SEPARANDO DADOS DE CADA JOGADOR
-    getline(file, line);
-    while(getline(file, line)){
-        stringstream ss(line);
+    CsvParser parser_players(file_players);
 
-        getline(ss, id, ',');
-        getline(ss, short_name, ',');
-        getline(ss, long_name, ',');
-
-        if(line.find("\"") != string::npos){
-            getline(ss, position, '\"');
-            getline(ss, position, '\"');
-            getline(ss, nacionality, ',');
+    for (auto row:parser_players){   
+        if(indice == 0){
+            indice++;
+            continue;
         }
-        else
-            getline(ss, position, ',');
 
-        getline(ss, nacionality, ',');
-        getline(ss, club, ',');
-        getline(ss, league, ',');
+        id = row[0];
+        short_name = row[1];
+        long_name = row[2];
+        position = row[3];
+        nacionality = row[4];
+        club = row[5];
+        league = row[6];
 
         // INSERE NA HASH OS DADOS DO PLAYER
         hashtable_player.insert_player(Player (id, short_name, long_name, position, nacionality, club, league));
@@ -133,94 +124,107 @@ int main(){
         trie_players.insert(long_name, stoi(id));
     }
 
-    file.close();
-
-    //trie_players.print(trie_players.get_root());
-    //hashtable_player.print_hashtable();
-    //hashtable_player.print_player1(214977);
+    indice = 0;
+    file_players.close();
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
-//  ENTRADA DO ARQUIVO COM AVALIAÇÕES DOS USUÁRIOS
-    Hashtable_User hashtable_user(HASH_USER);
+    //  ENTRADA DO ARQUIVO COM AVALIAÇÕES DOS USUÁRIOS
+    string rating;
 
-    file.open(RATING_FILE);
+    ifstream file_ratings(RATING_FILE);
+    
 
-    if(!file.is_open()){
-        cout << "Arquivo nao encontrado." << endl;
+    if(!file_ratings.is_open()){
+        cout << "Arquivo ratings nao encontrado." << endl;
         return 0;
     }
 
-    // SEPARANDO DADOS DE CADA AVALIAÇÃO
-    getline(file, line);
-    while(getline(file, line)){
-        stringstream ss(line);
+    CsvParser parser_ratings(file_ratings);
 
-        getline(ss, id_user, ',');
-        getline(ss, id, ',');
-        getline(ss, rating, ',');
+    for (auto row:parser_ratings){   
+        if(indice == 0){
+            indice++;
+            continue;
+        }
 
+        id_user = row[0];
+        id = row[1];
+        rating = row[2];
+
+        // ATUALIZA A AVALIAÇÃO DO PLAYER
         hashtable_player.update_rating(id, stof(rating));
+
+        // INSERE NA HASH OS DADOS DO USER
         hashtable_user.insert_user(User(id_user, id, rating));
     }
 
-    file.close();
-
-    //hashtable_user.print_hashtable();
-    //hashtable_player.print_player1(214977);
+    indice = 0;
+    file_players.close();
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
-//  ENTRADA DO ARQUIVO COM AS CONSULTAS USANDO TAGS
-    file.open(TAG_FILE);
+    //  ENTRADA DO ARQUIVO COM AS CONSULTAS USANDO TAGS
+    string tag;
 
-    if(!file.is_open()){
-        cout << "Arquivo nao encontrado." << endl;
+    ifstream file_tags(TAG_FILE);
+
+    if(!file_tags.is_open()){
+        cout << "Arquivo tags nao encontrado." << endl;
         return 0;
     }
 
-    // SEPARANDO DADOS DE CADA TAG
-    getline(file, line);
-    while(getline(file, line)){
-        stringstream ss(line);
+    CsvParser parser_tags(file_tags);
 
-        getline(ss, id_user, ',');
-        getline(ss, id, ',');
-        getline(ss, tag, ',');
+    for (auto row:parser_tags){   
+        if(indice == 0){
+            indice++;
+            continue;
+        }
 
+        id_user = row[0];
+        id = row[1];
+        tag = row[2];
+
+        // INSERE NA TRIE OS DADOS DA TAG
         trie_tags.insert(tag, stoi(id));
     }
 
-    file.close();
+    indice = 0;
+    file_tags.close();
 
-    //trie_tags.print(trie_tags.get_root());
+    end = clock();
+    cout << "Tempo de insercao: " << (double)(end - start) / CLOCKS_PER_SEC << " S" << endl;
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
-// MENU DE OPÇÕES
-    //ordenar os players aqui
-    vector<Player> printa;
-    vector<Player_User> printa2;
-    vector<Player_User> aux_pu;
-    vector<Player_User> principal;
+    // MENU DE OPÇÕES
+    vector<Player> printa, players_vet, printa_players;
+    vector<Player_User> printa2, aux_pu, principal;
+
     vector<User> user_ratings;
     vector<string> tags_entrada;
+    vector<int> aux, ids;
+
     int num_linhas = tags_entrada.size();
     vector<vector<int>> ids_tags(num_linhas);
-    vector<int> aux;
-    stringstream ss;
-    int j = 0;
-    int k = 0;
-    string entrada;
-    string e1;
 
-    // MENU DE OPÇÕES
+    string entrada, top_num, top_pos, e1;
+    string prefix, tag_name, id_string;
+    int j = 0, k = 0, op;
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+    // VERIFICA QUAL SINTAXE O USUÁRIO USOU
     cout << "Digite a opcao desejada: " << endl;
     getline(cin, entrada);
 
     stringstream ss2(entrada);
     getline(ss2, e1, ' ');
 
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+    // DETERMINA OP
     if(e1 == "player"){
         getline(ss2, prefix, ' ');
         op = 1;
@@ -230,7 +234,8 @@ int main(){
         op = 2;
     }
     else if(e1 == "top"){
-
+        getline(ss2, top_num, ' ');
+        getline(ss2, top_pos, ' ');
         op = 3;
     }
     else if(e1 == "tags"){
@@ -238,8 +243,9 @@ int main(){
         op = 4;
     }   
     
-    string id_string;
 
+//-------------------------------------------------------------------------------------------------------------------------------------------
+    // EXECUTA A OPÇÃO ESCOLHIDA
     switch (op){
         case 1:
             ids = trie_players.get_ids(trie_players.catch_prefix(trie_players.get_root(), prefix));
@@ -258,7 +264,7 @@ int main(){
             break;
 
 
-    //-------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------
         case 2:
             // insere em user_ratings ordenando pelo rate
             user_ratings = hashtable_user.find_user_ratings(id_user);
@@ -268,12 +274,12 @@ int main(){
                 printa.push_back(hashtable_player.find_player(user_ratings[i].id_player));
             }
 
-            // inserir na print2
+            // insere na print2
             for(int i = 0; i < printa.size(); i++){
                 printa2.push_back(Player_User{printa[i], stof(user_ratings[i].rate)});
             }
 
-            //iniciaWhile:
+            // ordena printa2 por rate_user
             do{
                 while(printa2[j].rate_user == printa2[k].rate_user){
                     binary_insertion(aux_pu, printa2[k], 0, aux_pu.size());
@@ -284,26 +290,31 @@ int main(){
 
                 aux_pu.clear();
                 j = k;
+
             }while((printa2.size() - k) > 0);
-            //if((printa2.size() - k) > 0)
-                //goto iniciaWhile;
 
             pesquisa2(principal);
 
             break;
 
 
-    //-------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------
         case 3:
+            players_vet = hashtable_player.find_players_by_position(top_pos);
+
+            for(int i = 0; i < players_vet.size(); i++){
+                hashtable_player.binary_insertion(printa_players, players_vet[i], 0, printa_players.size());
+            }
+
+            for(int i = 0; i < stoi(top_num); i++){
+                cout << printa_players[i].short_name << " " << printa_players[i].position << " " << printa_players[i].rate << endl;
+            }
+
             break;
 
-            
-    //-------------------------------------------------------------------------------------------------------------------------------------------
-        case 4:{
-            vector<string> tags_entrada;
-            vector<vector<int>> ids_tags;
-            vector<int> aux;
 
+//-------------------------------------------------------------------------------------------------------------------------------------------
+        case 4:{
             // separa tags
             tags_entrada = splitString(tag_name, '\'');
             
@@ -348,11 +359,13 @@ int main(){
             }
 
             break;}
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
         default:
+            cout << "Opcao invalida." << endl;
             break;
     }
 
     return 0;
 }
-
-

@@ -15,10 +15,8 @@ private:
     int size;
 public:
     Trie_User();
-    ~Trie_User();
     void insert (string word, int id_player);
-    void print(NODE_* root);
-    void remove(string word, int id_player);
+    void print(NODE_* root);        // APAGAR DEPOIS
     NODE_* get_root(){return root;}
     NODE_* catch_tag(NODE_* root, string tag);
     vector<int> get_ids(NODE_* root);
@@ -29,10 +27,6 @@ Trie_User::Trie_User(){
     root->data = ' ';
     root->is_end = false;
     size = 0;
-}
-
-Trie_User::~Trie_User(){
-    delete root;
 }
 
 void Trie_User::insert(string word, int id_player){
