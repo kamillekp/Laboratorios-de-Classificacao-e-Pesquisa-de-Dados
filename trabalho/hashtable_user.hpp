@@ -12,11 +12,8 @@ class Hashtable_User {
     public:
         Hashtable_User(int MAX);
         void insert_user (User user);
-        User find_user (string id);             // APAGAR DEPOIS
-        void print_hashtable();                 // APAGAR DEPOIS
         void binary_insertion(vector<User> &vet, User user, int left, int right);
-        vector<User> find_user_ratings (string id);
-        void printa_users(vector<User> &vet);   // APAGAR DEPOIS
+        vector<User> find_user_ratings (int id);
 };
 
 Hashtable_User::Hashtable_User (int MAX){
@@ -27,36 +24,13 @@ Hashtable_User::Hashtable_User (int MAX){
 }
 
 void Hashtable_User::insert_user (User user){
+    int ind = user.id % MAX;
 
-    int ind = stoi(user.id) % MAX;
-
-    // if(hashtable[ind].size() == 0){
-    //     ocupadas++;
-    // }
+    if(hashtable[ind].size() == 0){
+        ocupadas++;
+    }
 
     hashtable[ind].push_back(user);
-}
-
-User Hashtable_User::find_user (string id){
-    int ind = stoi(id) % MAX;
-
-    for(int i = 0; i < hashtable[ind].size(); i++){
-        consultas++;
-
-        if(hashtable[ind][i].id == id){
-            return hashtable[ind][i];
-        }
-    }
-}
-
-void Hashtable_User::print_hashtable(){
-    for(int i = 0; i < MAX; i++){
-        cout << i << " -> ";
-        for(int j = 0; j < hashtable[i].size(); j++){
-            cout << "[" << hashtable[i][j].id << ":" << hashtable[i][j].id_player << ":" << hashtable[i][j].rate << "] -> ";
-        }
-        cout << "\\" << endl;
-    }
 }
 
 void Hashtable_User::binary_insertion(vector<User> &vet, User user, int left, int right){
@@ -78,8 +52,8 @@ void Hashtable_User::binary_insertion(vector<User> &vet, User user, int left, in
         binary_insertion(vet, user, left, mid);
 }
 
-vector<User> Hashtable_User::find_user_ratings (string id){
-    int ind = stoi(id) % MAX;
+vector<User> Hashtable_User::find_user_ratings (int id){
+    int ind = id % MAX;
     vector<User> vet;
 
     for(int i = 0; i < hashtable[ind].size(); i++){

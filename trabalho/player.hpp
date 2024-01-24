@@ -3,7 +3,7 @@ using namespace std;
 
 class Player{
     public:
-        string id;
+        int id;
         string short_name;
         string long_name;
         string position;
@@ -14,7 +14,7 @@ class Player{
         float rate;
         int counts;
 
-        Player(string id, string short_name, string long_name, string position, string nacionality, string club, string league){
+        Player(int id, string short_name, string long_name, string position, string nacionality, string club, string league){
             this->id = id;
             this->short_name = short_name;
             this->long_name = long_name;

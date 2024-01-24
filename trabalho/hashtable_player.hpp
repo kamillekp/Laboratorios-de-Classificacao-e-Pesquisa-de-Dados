@@ -18,18 +18,17 @@ class Hashtable_Player {
         }
 
         void insert_player (Player player);
-        Player find_player (string id);
-        void print_player1(int id_player);          // PESQUISA 1
-        void print_player3(int id_player);          // PESQUISA 3
-        void print_player4(int id_player);          // PESQUISA 4
-        void print_hashtable();                     // APAGAR DEPOIS
-        void update_rating(string id, float rating);
+        Player find_player (int id);
+        void print_player1(int id_player);                                  // PESQUISA 1
+        void print_player3(int top_num, vector<Player> &printa_players);    // PESQUISA 3
+        void print_player4(int id_player);                                  // PESQUISA 4
+        void update_rating(int id, float rating);
         void binary_insertion(vector<Player> &vet, Player player, int left, int right);
         vector<Player> find_players_by_position(string position);
 };
 
 void Hashtable_Player::insert_player (Player player){
-    int ind = stoi(player.id) % MAX;
+    int ind = player.id % MAX;
 
     if(hashtable[ind].size() == 0){
         ocupadas++;
@@ -38,8 +37,8 @@ void Hashtable_Player::insert_player (Player player){
     hashtable[ind].push_back(player);
 }
 
-Player Hashtable_Player::find_player (string id){
-    int ind = stoi(id) % MAX;
+Player Hashtable_Player::find_player (int id){
+    int ind = id % MAX;
 
     for(int i = 0; i < hashtable[ind].size(); i++){
         consultas++;
@@ -54,7 +53,7 @@ void Hashtable_Player::print_player1(int id_player){
     int ind = id_player % MAX;
 
     for(int i = 0; i < hashtable[ind].size(); i++){
-        if(hashtable[ind][i].id == to_string(id_player)){
+        if(hashtable[ind][i].id == id_player){
             if(hashtable[ind][i].counts == 0){
                 cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].position << ", 5) " << "0.0" << ", 6) " << hashtable[ind][i].counts << endl;
             }
@@ -67,11 +66,20 @@ void Hashtable_Player::print_player1(int id_player){
     }
 }
 
+void Hashtable_Player::print_player3(int top_num, vector<Player> &printa_players){
+    
+    cout << "1) id, 2) short_name, 3) long_name, 4) position, 5) nacionality, 6) club, 7) league, 8) rate, 9) counts" << endl;
+    for(int i = 0; i < top_num; i++){
+        cout << "1) " << printa_players[i].id << ", 2) " << printa_players[i].short_name << ", 3) " << printa_players[i].long_name << ", 4) " << printa_players[i].position << ", 5) " << ", 6) " << printa_players[i].nacionality << ", 7) " << printa_players[i].club << ", 8) " << printa_players[i].league << ", 9) " << fixed << setprecision(6) << printa_players[i].rate << ", 10) " << printa_players[i].counts << endl;
+    }
+
+}
+
 void Hashtable_Player::print_player4(int id_player){
     int ind = id_player % MAX;
 
     for(int i = 0; i < hashtable[ind].size(); i++){
-        if(hashtable[ind][i].id == to_string(id_player)){
+        if(hashtable[ind][i].id == id_player){
             if(hashtable[ind][i].counts == 0){
                 cout << "1) " << hashtable[ind][i].id << ", 2) " << hashtable[ind][i].short_name << ", 3) " << hashtable[ind][i].long_name << ", 4) " << hashtable[ind][i].nacionality << ", 5) " << hashtable[ind][i].club << ", 6) " << hashtable[ind][i].league << ", 7) " << fixed << setprecision(6) << hashtable[ind][i].rate << ", 8) " << setprecision(0) << hashtable[ind][i].counts << endl;
             }
@@ -84,23 +92,13 @@ void Hashtable_Player::print_player4(int id_player){
     }
 }
 
-void Hashtable_Player::update_rating(string id, float rating){
-    int ind = stoi(id) % MAX;
+void Hashtable_Player::update_rating(int id, float rating){
+    int ind = id % MAX;
 
     for(int i = 0; i < hashtable[ind].size(); i++){
         if(hashtable[ind][i].id == id){
             hashtable[ind][i].update_rating(rating);
         }
-    }
-}
-
-void Hashtable_Player::print_hashtable(){
-    for(int i = 0; i < MAX; i++){
-        cout << i << " -> ";
-        for(int j = 0; j < hashtable[i].size(); j++){
-            cout << "[" << hashtable[i][j].id << ":" << hashtable[i][j].short_name << ":" << hashtable[i][j].long_name << ":" << hashtable[i][j].position << ":" << hashtable[i][j].nacionality << ":" << hashtable[i][j].club << ":" << hashtable[i][j].league << "] -> ";
-        }
-        cout << "\\" << endl;
     }
 }
 
