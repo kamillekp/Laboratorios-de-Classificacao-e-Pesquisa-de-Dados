@@ -70,7 +70,9 @@ void Hashtable_Player::print_player3(int top_num, vector<Player> &printa_players
     
     cout << "1) id, 2) short_name, 3) long_name, 4) position, 5) nacionality, 6) club, 7) league, 8) rate, 9) counts" << endl;
     for(int i = 0; i < top_num; i++){
-        cout << "1) " << printa_players[i].id << ", 2) " << printa_players[i].short_name << ", 3) " << printa_players[i].long_name << ", 4) " << printa_players[i].position << ", 5) " << ", 6) " << printa_players[i].nacionality << ", 7) " << printa_players[i].club << ", 8) " << printa_players[i].league << ", 9) " << fixed << setprecision(6) << printa_players[i].rate << ", 10) " << printa_players[i].counts << endl;
+
+        if(printa_players[i].counts > 1000)
+            cout << "1) " << printa_players[i].id << ", 2) " << printa_players[i].short_name << ", 3) " << printa_players[i].long_name << ", 4) " << printa_players[i].position << ", 5) " << ", 6) " << printa_players[i].nacionality << ", 7) " << printa_players[i].club << ", 8) " << printa_players[i].league << ", 9) " << fixed << setprecision(6) << printa_players[i].rate << ", 10) " << printa_players[i].counts << endl;
     }
 
 }

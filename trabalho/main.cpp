@@ -12,7 +12,7 @@ using namespace aria::csv;
 #define HASH_PLAYER 9473
 #define HASH_USER 7499981
 #define PLAYERS_FILE ".\\arquivos-parte1\\players.csv"
-#define RATING_FILE ".\\rating.csv"
+#define RATING_FILE ".\\arquivos-parte1\\minirating.csv"
 #define TAG_FILE ".\\arquivos-parte1\\tags.csv"
 
 
@@ -338,7 +338,7 @@ int main(){
                 players_vet = hashtable_player.find_players_by_position(dois_valores.dois);
 
                 for(int i = 0; i < players_vet.size(); i++){
-                    hashtable_player.binary_insertion(printa_players, players_vet[i], 0, printa_players.size());
+                        hashtable_player.binary_insertion(printa_players, players_vet[i], 0, printa_players.size());
                 }
 
                 hashtable_player.print_player3(stoi(dois_valores.um), printa_players);
